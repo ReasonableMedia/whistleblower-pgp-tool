@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Secure whistleblower submission • TRSA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Strict CSP: no inline JS. If you self-host openpgp, change src and keep 'self' only. -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' blob: data:;
+                 script-src 'self' https://cdn.jsdelivr.net;
+                 style-src 'self' 'unsafe-inline';
+                 img-src 'self' data:;
+                 connect-src 'self';
+                 object-src 'none';
+                 base-uri 'none';
+                 frame-ancestors 'none'">
+
+  <!-- Load OpenPGP then our app JS. data-cfasync stops Cloudflare Rocket Loader meddling. -->
+  <script data-cfasync="false" src="https://cdn.jsdelivr.net/npm/openpgp@5.11.1/dist/openpgp.min.js" defer></script>
+  <script data-cfasync="false" src="/assets/wb.js" defer></script>
+
+  <style>
+    :root{ --gold:#e7c77f; --ink:#e6e6e6; --bg:#111; --panel:#1a1a1a; --border:#333; }
+    *{ box-sizing:border-box }
+    body{ font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--ink); margin:0; }
+    main{ max-width:900px; margin:0 auto; padding:28px 18px 48px; }
+    h1{ font-size:1.9rem; margin:.2rem 0 1rem; }
+    .note,.panel{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin:12px 0; }
+    label{ display:block; font-weight:600; margin:14px 0 6px; }
+    input,textarea{ width:100%; background:#141414; color:var(--ink); border:1px solid var(--border); border-radius:8px; padding:10px 12px; }
+    textarea{ min-height:180px; }
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; margin:12px 0; }
+    button{ background:var(--gold); color:#111; border:0; border-radius:10px; padding:10px 14px; font-weight:800; cursor:pointer; }
+    button.secondary{ background:#222; color:var(--ink); border:1px solid var(--border); }
+    pre{ background:#000; border:1px solid var(--border); color:#d6ffd6; border-radius:8px; padding:12px; white-space:pre-wrap; word-break:break-word; min-height:80px; }
+    .muted{ color:#bdbdbd; font-size:.96rem; }
+    .success{ color:#9be099 } .error{ color:#ff9b9b }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Secure whistleblower submission</h1>
+  <p class="muted">Your report is encrypted in your browser before it leaves your device. We receive only the encrypted text and decrypt offline.</p>
+
+  <div class="note">
+    <p><strong>Send the encrypted report to:</strong> <code>whistleblower@thereasonableadjustment.co.uk</code></p>
+    <p class="muted">For stronger anonymity, consider Tor Browser, avoid personal identifiers, and remove metadata from files before sharing them by any method.</p>
+  </div>
+
+  <form id="wb" class="panel" onsubmit="return false" aria-describedby="status">
+    <label for="follow">Optional follow up code</label>
+    <input id="follow" type="text" placeholder="Example: W-742. Include this on future messages to match your reports.">
+
+    <label for="message">Your report</label>
+    <textarea id="message" placeholder="Include dates, locations, departments, witnesses, and any context that helps us verify the claim."></textarea>
+
+    <div class="actions">
+      <button id="encryptBtn" type="button">Encrypt report</button>
+      <button id="copyBtn" class="secondary" type="button">Copy encrypted</button>
+      <button id="downloadBtn" class="secondary" type="button">Download .asc</button>
+      <button id="clearBtn" class="secondary" type="button">Clear</button>
+    </div>
+
+    <div id="status" class="muted" role="status" aria-live="polite">Loading encryption library…</div>
+
+    <label for="output">Encrypted report</label>
+    <pre id="output">Nothing yet...</pre>
+  </form>
+
+  <p class="muted">We do not place trackers on this page. For very high risk situations, use an offline PGP client over Tor, or specialist platforms such as SecureDrop or GlobaLeaks.</p>
+  <noscript><p>This page needs JavaScript to encrypt in your browser. If you cannot enable JavaScript, use an offline PGP client to encrypt your report with our public key, then email the .asc file.</p></noscript>
+</main>
+</body>
+</html>
